@@ -94,6 +94,7 @@ classmates[-2]  获取倒数第二个元素
 插入到指定位置  insert(i, 'XXX')
 删除末尾元素  pop
 删除指定位置元素  pop(i)
+排序  sore()
 
 元组tuple：
 classmates = ('Michael', 'Bob', 'Tracy')
@@ -108,3 +109,42 @@ t = ('a', 'b', ['A', 'B']) 其中['A', 'B']可变
 
 把str转换成整数  int()函数
 
+循环
+for X in XXX:
+	print(x);
+
+list(range(5))
+生产0-4之间的整数[0, 1, 2, 3, 4]
+
+for x in range(101):
+    sum = sum + x
+
+dict键-值（key-value）：
+d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
+判断key是否存在： 
+1.'Thomas' in d 返回False
+2.d.get('Thomas') 返回None
+d.get('Thomas', -1)，-1表示不存在时自定义的返回值
+
+删除key  pop(key)，如pop('Bob')
+
+set:
+s = set([1, 2, 3])
+set和dict类似，也是一组key的集合，但不存储value
+在set中，没有重复的key
+
+add(key)方法  添加元素到set中
+remove(key)方法  删除元素
+
+set可以看成数学意义上的无序和无重复元素的集合，因此，两个set可以做数学意义上的交集、并集等操作
+s1 = set([1, 2, 3])
+s2 = set([2, 3, 4])
+s1 & s2
+	{2, 3}
+
+对于不可变对象，如str
+>>> a = 'abc'
+>>> a.replace('a', 'A')
+'Abc'
+>>> a
+'abc'
