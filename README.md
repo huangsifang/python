@@ -119,6 +119,8 @@ list(range(5))
 for x in range(101):
     sum = sum + x
 
+[L[x] for x in range(len(L))]循环整个list
+
 dict键-值（key-value）：
 d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
 判断key是否存在： 
@@ -148,3 +150,186 @@ s1 & s2
 'Abc'
 >>> a
 'abc'
+
+函数：
+abs()
+max() min()
+int()
+float()
+str()
+bool()
+hex()  将一个整数转化为十六进制数
+将函数名赋给一个变量，就可以将变量当函数名使用
+a=abs
+a(-1)
+
+定义函数
+def my_abs(x):
+使用 from 文件名 import 函数名  来导入函数
+
+定义空函数：
+def nop():
+	pass #用于占位，也可以在其他语句中使用
+
+if age>=18:
+	pass #占位，类似于分号
+
+函数返回多个值：
+import math
+def move(x, y, step, angle=0):
+	nx = x + step * math.cos(angle)
+	ny = x + step * math.sin(angle)
+	return nx, ny #返回一个tuple
+
+默认参数：
+当存在两个重名函数
+def pow(x):  和  def pow(x, n):时，
+使用pow(5)，会报缺少参数错误
+解决方法：def pow(x, n=2):，此时必须默认参数n在后
+
+默认参数的坑
+def add_end(L=[]):
+	L.append('END')
+	return  L
+
+>>> add_end()
+['END']
+>>> add_end()
+['END', 'END']
+函数在定义时，默认参数L的值就被计算出来了
+所以，默认参数必须指向不变对象
+def add_end(L=None):
+	if L is None:
+        L = []
+
+函数可变参数：
+def calc(*numbers):
+这时的numbers相当于一个tuple
+调用方法：calc(1, 2)
+若要传入list或tuple
+num = [1,2,3]
+calc(*num)
+
+关键字参数
+def person(name, age, **kw): #kw相当于一个dict
+	print('name:', name, 'age', age, 'other', kw)
+
+>>> person('Michael', 30)
+name: Michael age: 30 other: {}
+>>> person('Michael', 30, city='Beijing')
+name: Michael age: 30 other: { 'city': 'Beijing' }
+同时也可以直接传入一个dict
+person('Michael', 30, **extra)
+
+限制传入的dict：
+def person(name, age, *, city, job):
+调用方法：person('Michael', 30, city='Beijing', job='Enginner')
+只接受city和job且必须存在
+总结：
+区别位置参数和关键字参数，使用*分割
+参数定义顺序：必选参数、默认参数、可变参数、命名参数、关键字参数
+def f1(a, b, c=0, *args, **kw):
+def f2(a, b, c=0, *, d, **kw):
+
+args = (1, 2, 3, 4)
+kw = {'d': 99, 'x': '#'}
+f1(*args, **kw)
+结果；a = 1 b = 2 c = 3 args = (4,) kw = {'d': 99, 'x': '#'}
+
+尾递归事实上和循环是等价的，没有循环语句的编程语言只能通过尾递归实现循环。
+Python标准的解释器没有针对尾递归做优化，任何递归函数都存在栈溢出的问题。
+
+使用range：
+print(list(range(1, 100, 2)))
+[1,3,4,5,7...]
+
+>>> r = []
+>>> n = 3
+>>> for i in range(n):
+...     r.append(L[i])
+
+切片（Slice）：
+L[0:3]取L中0~2下标位置的值，0可省略
+L[-2:]取倒数第二个~最后一个
+L[:10:2]前10个数，每两个取一个
+L[::5]所有数，每5个取一个
+L[:]所有，复制一个list
+切片也可用于tuple，操作结果仍是tuple
+切片也可用于字符创串，操作结果仍是字符串
+
+迭代：
+dict迭代的是key  for key in d:
+若要迭代value  for value in d.values():
+若要同时迭代key和value  for k,v in d.items():
+
+
+若要实现下标迭代（enumerable函数）：
+for i, value in enumerable(['A', 'B', 'C']);
+
+>>> for x, y in [(1, 1), (2, 4), (3, 9)]:
+...     print(x, y)
+
+列表生成式
+[x * x for x in range(1, 11)]
+[x * x for x in range(1, 11)if x % 2 == 0]
+
+两层循环： [m + n for m in 'ABC' for n in 'XYZ']
+
+列出当前目录下的所有文件和目录名：
+>>> import os # 导入os模块，模块的概念后面讲到
+>>> [d for d in os.listdir('.')] # os.listdir可以列出文件和目录
+
+把一个list中所有的字符串变成小写：[s.lower() for s in L]
+对于L = ['Hello', 'World', 18, 'Apple', None]
+[x.lower() if isinstance(x, str) else x for x in L1]
+
+在Python中，这种一边循环一边计算的机制，称为生成器：generator
+创建generator：g = (x * x for x in range(10))
+迭代：
+for n in g:
+	print(n)
+
+使用函数定义generator：
+def fib(max):
+    n, a, b = 0, 0, 1
+    while n < max:
+        yield b  #包含yield关键字，就是generator
+        a, b = b, a + b
+        n = n + 1
+    return 'done'
+
+	其中a, b = b, a + b
+	相当于：
+
+	t = (b, a + b) # t是一个tuple
+	a = t[0]
+	b = t[1]
+
+generator的函数，在每次调用next()的时候执行，遇到yield语句返回，再次执行时从上次返回的yield语句处继续执行
+
+循环自定义的generator函数
+>>> g = fib(6)
+>>> while True:
+...     try:
+...         x = next(g)
+...         print('g:', x)
+...     except StopIteration as e:
+...         print('Generator return value:', e.value)
+...         break
+
+参数类型检查  isinstance
+def my_abs(x):
+	if not isinstance(x, (int, float)):
+		raise TypeError('bad operand type')
+
+凡是可作用于for循环的对象都是Iterable类型
+凡是可作用于next()函数的对象都是Iterator类型（生成器）
+Python的for循环本质上就是通过不断调用next()函数实现的
+
+判断对象是否可迭代（通过collections模块的Iterable类型判断）：
+from collections import Iterable
+isinstance('abc', Iterale) #返回True，表示字符串'abc'可迭代
+isinstance('abc', str)#判断是否为字符串
+isinstance((x for x in range(10)), Intrator)判断是否是Iterator对象(生成器是）
+把list、dict、str等Iterable变成Iterator可以使用iter()函数
+isinstance(iter('abc'), Iterator)
