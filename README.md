@@ -255,7 +255,7 @@ L[:10:2]前10个数，每两个取一个
 L[::5]所有数，每5个取一个
 L[:]所有，复制一个list
 切片也可用于tuple，操作结果仍是tuple
-切片也可用于字符创串，操作结果仍是字符串
+切片也可用于字符串，操作结果仍是字符串
 
 迭代：
 dict迭代的是key  for key in d:
@@ -333,3 +333,38 @@ isinstance('abc', str)#判断是否为字符串
 isinstance((x for x in range(10)), Intrator)判断是否是Iterator对象(生成器是）
 把list、dict、str等Iterable变成Iterator可以使用iter()函数
 isinstance(iter('abc'), Iterator)
+
+map:
+>>> def f(x):
+...     return x * x
+...
+>>> r = map(f, [1, 2, 3, 4, 5, 6, 7, 8, 9]) #r是一个Iterator
+>>> list(r)
+[1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+
+>>> list(map(str, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
+['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+reduce：
+reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)
+
+filter:返回一个Iterator
+def is_odd(n):
+    return n % 2 == 1
+
+list(filter(is_odd, [1, 2, 4, 5, 6, 9, 10, 15]))
+# 结果: [1, 5, 9, 15]
+
+去除空字符串
+def not_empty(s):
+    return s and s.strip()
+
+list(filter(not_empty, ['A', '', 'B', None, 'C', '  ']))
+# 结果: ['A', 'B', 'C']
+
+排序sort:
+sorted([36, 5, -12, 9, -21])
+sorted([36, 5, -12, 9, -21], key=abs)//按绝对值大小排序
+sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower)//忽略大小写排序
+sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower, reverse=True)//反向排序
