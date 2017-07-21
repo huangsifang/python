@@ -455,3 +455,35 @@ class Student(object):
 Student.name #类属性
 s = Student()
 print(s.name) #实例属性
+
+
+try:
+	XXX
+except Exception as e:
+	logging.expection(e) #打印错误，把错误记录到日志文件里
+
+raise主动抛出错误：
+如果不带参数，就会把当前错误原样抛出
+raise ValueError('invalid value: %s' % s)，valueError是自带的错误类型，也可以自定义错误
+
+调试：
+1.print()
+
+2.assert n!= 0, #表示n!=0应该是true，若为false，则会抛出AssertionError错误
+启动Python解释器时可以用-O参数来关闭assert  python -O err.py
+
+3.logging
+import logging（一条语句可以同时输出到console和文件）
+logging.basicConfig(level=logging.INFO) #指定记录信息的级别，有debug,info,warning,error
+n = 0
+logging.info('n = %d' % n)
+
+4.调试器pdb
+python -m pdb err.py
+l：查看代码
+n：单步执行
+p：查看变量
+q：结束调试
+
+5.pdb.set_trace()
+在程序中设置断点
