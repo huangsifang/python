@@ -334,6 +334,9 @@ isinstance((x for x in range(10)), Intrator)判断是否是Iterator对象(生成
 把list、dict、str等Iterable变成Iterator可以使用iter()函数
 isinstance(iter('abc'), Iterator)
 
+isinstance(xxx, list)
+isinstance(xxx, Animal) #自定义的类
+
 map:
 >>> def f(x):
 ...     return x * x
@@ -368,3 +371,87 @@ sorted([36, 5, -12, 9, -21])
 sorted([36, 5, -12, 9, -21], key=abs)//按绝对值大小排序
 sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower)//忽略大小写排序
 sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower, reverse=True)//反向排序
+
+关键字lambda表示匿名函数
+>>> list(map(lambda x: x * x, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
+[1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+lambda x: x * x实际上就是：
+def f(x):
+    return x * x
+
+Python对匿名函数的支持有限，只有一些简单的情况下可以使用匿名函数。
+
+偏函数（functools.partial）
+>>> import functools
+>>> int2 = functools.partial(int, base=2)
+
+max2 = functools.partial(max, 10)
+相当于max(10, *args)
+
+sys模块
+sys模块有一个arg变量，用list存储了命令行的所有参数。argv至少有一个元素，因为第一个参数永远是该.py文件的名称
+
+if __name__=='__main__': #当直接运行文件时为true，当导入该文件时为false
+    test()
+
+类似__xxx__这样的变量是特殊变量，可以被直接引用，有特殊用途，比如__author__，__name__就是特殊变量，模块定义的文档注释也可以用特殊变量__doc__访问
+
+类似_xxx和__xxx这样的函数或变量就是非公开的（private），不应该被直接引用，比如_abc，__abc等
+
+类：
+class Student(object):
+    def __init__(self, name, score): #__init__方法的第一个参数永远是self，表示创建的实例本身
+        self.name = name
+        self.score = score
+
+实例的变量名如果以__开头，就变成了一个私有变量（private）：如self.__name,
+Python解释器对外把__name变量改成了_Student__name，所以，仍然可以通过_Student__name来访问__name变量
+
+
+type:
+>>>type(123)
+<class 'int'>
+>>> type(123)==int
+True
+>>> type('abc')==type('123')
+True
+>>> type('abc')==str
+True
+
+>>> import types
+>>> def fn():
+...     pass
+...
+>>> type(fn)==types.FunctionType
+True
+>>> type(abs)==types.BuiltinFunctionType
+True
+>>> type(lambda x: x)==types.LambdaType
+True
+>>> type((x for x in range(10)))==types.GeneratorType
+True
+
+>>> isinstance([1, 2, 3], (list, tuple)) #判断是否是list或tuple
+True
+
+使用dir()函数：获得一个对象的所有属性和方法
+
+len('ABC')与'ABC'.__len__()效果相同
+
+hasattr(obj, 'x') # 有属性'x'吗？
+setattr(obj, 'y', 19) # 设置一个属性'y'
+getattr(obj, 'y') # 获取属性'y'，只有在不知道对象信息的时候，我们才会去获取对象信息
+getattr(obj, 'z', 404) # 获取属性'z'，如果不存在，返回默认值404
+404
+hasattr(obj, 'power') # 有属性'power'吗？（pow为对象方法）
+
+实例属性和类属性
+class Student(object):
+    name = 'Student #类属性
+    def __init__(self, name):
+        self.name = name #实例属性
+
+Student.name #类属性
+s = Student()
+print(s.name) #实例属性
