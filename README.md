@@ -456,6 +456,116 @@ Student.name #类属性
 s = Student()
 print(s.name) #实例属性
 
+实例方法和类方法
+>>> def set_age(self, age): # 定义一个函数作为实例方法
+...     self.age = age
+...
+>>> from types import MethodType
+>>> s.set_age = MethodType(set_age, s) # 给实例绑定一个方法
+	该实例方法只存在于该实例中，其他实例没有
+
+>>> def set_score(self, score):
+...     self.score = score
+...
+>>> Student.set_score = set_score
+	类方法对所有实例都有效
+
+限制类能绑定的属性
+class Student(object):
+    __slots__ = ('name', 'age') # 用tuple定义允许绑定的属性名称
+限制对于子类无效
+
+优化get  set
+class Student(object):
+
+    @property
+    def score(self): # 把get方法变成属性，调用时使用s.score，实际转化成s.get_score()
+        return self._score
+
+    @score.setter
+    def score(self, value): # 把set方法变成属性，调用时使用s.score=XXX，实际转化成s.set_score()
+        if not isinstance(value, int):
+            raise ValueError('score must be an integer!')
+        if value < 0 or value > 100:
+            raise ValueError('score must between 0 ~ 100!')
+        self._score = value
+
+使用__str__():
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+    def __str__(self):
+        return 'Student object (name=%s)' % self.name
+
+此时 print(Student('Michael'))  返回  Student object (name=Michael)
+若要在不使用print情况下同样返回这种结果，使用
+    __repr__ = __str__
+
+
+使用__iter__():  # 使类被用于for  in循环
+class Fib(object):
+    def __init__(self):
+        self.a, self.b = 0, 1 # 初始化两个计数器a，b
+
+    def __iter__(self):
+        return self # 实例本身就是迭代对象，故返回自己
+
+    def __next__(self):
+        self.a, self.b = self.b, self.a + self.b # 计算下一个值
+        if self.a > 100000: # 退出循环的条件
+            raise StopIteration()
+        return self.a # 返回下一个值
+
+        但是此时不能实现下标取数
+
+实现下标取数（切片）：__getitem__
+class Fib(object):
+    def __getitem__(self, n):
+        if isinstance(n, int): # n是索引
+            a, b = 1, 1
+            for x in range(n):
+                a, b = b, a + b
+            return a
+        if isinstance(n, slice): # n是切片
+            start = n.start
+            stop = n.stop
+            if start is None:
+                start = 0
+            a, b = 1, 1
+            L = []
+            for x in range(stop):
+                if x >= start:
+                    L.append(a)
+                a, b = b, a + b
+            return L
+
+__getattr__：
+class Student(object):
+
+    def __init__(self):
+        self.name = 'Michael'
+
+    def __getattr__(self, attr):
+        if attr=='score': # 使得在调用s.score时返回99，而不是报AttributeError错误，调用其他，如s.abc时返回为None
+            return 99
+        # 若要使在调用s.abc时报错，则主动抛出错误
+        # raise AttributeError('\'Student\' object has no attribute \'%s\'' % attr)
+
+__call__: # 在实例本身上调用
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self):
+        print('My name is %s.' % self.name)
+
+>>> s = Student('Michael')
+>>> s() # self参数不要传入
+My name is Michael.
+
+
+>>> callable(Student()) # 判断一个对象是否是“可调用”对象
+True
 
 try:
 	XXX
