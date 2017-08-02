@@ -567,6 +567,37 @@ My name is Michael.
 >>> callable(Student()) # 判断一个对象是否是“可调用”对象
 True
 
+
+枚举：
+from enum import Enum
+
+Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'))
+# 使用Month.Jan来引用一个常量
+
+for name, member in Month.__members__.items():
+    print(name, '=>', member, ',', member.value)
+
+# 定义类
+@unique # @unique装饰器可以帮助我们检查保证没有重复值
+class Weekday(Enum):
+    Sun = 0 # Sun的value被设定为0
+    Mon = 1
+    Tue = 2
+    Wed = 3
+    Thu = 4
+    Fri = 5
+    Sat = 6
+
+if __name__ == "__main__":
+    print(Weekday.Mon)  # Weekday.Mon
+    print(Weekday['Tue'])  # Weekday.Tue
+    print(Weekday.Tue.value)  # 2
+    print(day1 == Weekday.Mon) # True
+    print(Weekday(1))  # Weekday.Mon
+    for name, member in Weekday.__members__.items():
+        print(name, '=>', member)
+
+
 try:
 	XXX
 except Exception as e:
@@ -597,3 +628,9 @@ q：结束调试
 
 5.pdb.set_trace()
 在程序中设置断点
+
+
+单元测试
+self.assertEqual(a, b)
+with self.assertRaises(KeyError): # 通过d['empty']访问不存在的key时，断言会抛出KeyError
+	value = d['empty']
