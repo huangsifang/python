@@ -1,11 +1,3 @@
-当语句以冒号:结尾时，缩进的语句视为代码块
-a = 100
-if a >= 0:
-    print(a)
-else:
-    print(-a)
-
-
 python 大小写敏感
 
 
@@ -634,3 +626,125 @@ q：结束调试
 self.assertEqual(a, b)
 with self.assertRaises(KeyError): # 通过d['empty']访问不存在的key时，断言会抛出KeyError
 	value = d['empty']
+
+
+读写文件
+# 读取UTF-8编码的文本文件
+with open('/path/to/file', 'r') as f: # 这样写就不用写f.close了
+    # 直接读
+    print(f.read())
+
+    # 按size个字节读
+    read(size)
+
+    # 按行读
+    for line in f.readlines():
+    print(line.strip()) # 把末尾的'\n'删掉
+
+
+# 读取二进制文件，比如图片、视频
+f = open('/Users/michael/test.jpg', 'rb')
+
+# 读取非UTF-8编码的文本文件
+f = open('/Users/michael/gbk.txt', 'r', encoding='gbk')
+
+# 编码不规范的文件，直接忽略
+f = open('/Users/michael/gbk.txt', 'r', encoding='gbk', errors='ignore')
+
+读写内存
+写入内存：
+from io import StringIO
+f = StringIO()
+f.write('hello')  # 返回5
+f.write(' ')  # 返回1
+f.write('world!')  # 返回6
+print(f.getvalue()) # 返回hello world! getvalue()方法用于获得写入后的str
+
+读内存：
+from io import StringIO
+f = StringIO('Hello!\nHi!\nGoodbye!')
+while True:
+    s = f.readline()
+    if s == '':
+        break
+    print(s.strip())
+
+StringIO 用于str数据
+BytesIO  用于二进制数据
+
+写：
+from io import BytesIO
+f = BytesIO()
+f.write('中文'.encode('utf-8')) # 将'中文'字符串用utf-8编码
+print(f.getvalue())  # 返回b'\xe4\xb8\xad\xe6\x96\x87'
+
+读：
+from io import BytesIO
+f = BytesIO(b'\xe4\xb8\xad\xe6\x96\x87')
+f.read()  # 返回b'\xe4\xb8\xad\xe6\x96\x87'
+
+操作文件和目录
+import os
+os.name # 操作系统类型
+'posix'，说明是Linux、Unix或Mac OS X
+'nt', 说明是Windows
+
+操作系统类型：os.name
+详细系统信息：os.uname()，但uname()在windows上不提供
+环境变量：os.environ
+某个环境变量的值：os.environ.get('key')
+查看当前目录的绝对路径: os.path.abspath('.')
+拼接路径：os.path.join(os.path.abspath('.'), 'testdir')
+拆分路径：os.path.split('/Users/michael/testdir/file.txt')
+创建目录: os.mkdir(newPath)
+删掉目录: os.rmdir(newPath)
+得到文件扩展名：os.path.splitext('/path/to/file.txt')  # 返回('/path/to/file', '.txt')
+对文件重命名: os.rename('test.txt', 'test.py')
+删掉文件: os.remove('test.py')
+
+os模块补充：shutil模块
+文件复制：copyfile()函数
+
+列出当前目录下的所有目录：[x for x in os.listdir('.') if os.path.isdir(x)]
+所有.py文件：[x for x in os.listdir('.') if os.path.isfile(x) and os.path.splitext(x)[1]=='.py']
+
+序列化：pickle.dumps()
+import pickle
+d = dict(name='Bob', age=20, score=88)
+pickle.dumps(d)  返回b'\x80\x03}q\x00(X\x03\x00\x00...\x00Bobq\x04u.'
+# 直接写入文件
+f = open('dump.txt', 'wb')
+pickle.dump(d, f)
+f.close()
+
+反序列化：pickle.loads()，pickle.load()
+f = open('dump.txt', 'rb')
+d = pickle.load(f)
+f.close()
+print(d)  # 返回{'age': 20, 'score': 88, 'name': 'Bob'}
+
+JSON序列化：
+import json
+d = dict(name='Bob', age=20, score=88)
+print(json.dumps(d))  # 返回'{"age": 20, "score": 88, "name": "Bob"}'
+
+序列化类：
+import json
+
+class Student(object):
+    def __init__(self, name, age, score):
+        self.name = name
+        self.age = age
+        self.score = score
+
+print(json.dumps(s, default=lambda obj: obj.__dict__))
+或print(json.dumps(s.__dict__)) # 讨论中看到的
+
+JSON反序列化：
+json_str = '{"age": 20, "score": 88, "name": "Bob"}'
+print(json.loads(json_str, object_hook=dict2student))
+
+多进程
+Unix/Linux操作系统提供了一个fork()系统调用，fork()调用一次，返回两次，
+因为操作系统自动把当前进程（称为父进程）复制了一份（称为子进程），然后，分别在父进程和子进程内返回
+子进程永远返回0，而父进程返回子进程的ID
