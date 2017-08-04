@@ -748,3 +748,100 @@ print(json.loads(json_str, object_hook=dict2student))
 Unix/Linux操作系统提供了一个fork()系统调用，fork()调用一次，返回两次，
 因为操作系统自动把当前进程（称为父进程）复制了一份（称为子进程），然后，分别在父进程和子进程内返回
 子进程永远返回0，而父进程返回子进程的ID
+
+pid = os.fork()
+当子进程被调用时，pid为子进程ID
+当子进程调用结束时，pid为0
+os.getpid() 返回当前进程ID
+os.getppid() 返回父进程ID
+
+Windows下：
+from multiprocessing import Process
+import os
+
+# 子进程要执行的代码
+def run_proc(name):
+    print('Run child process %s (%s)...' % (name, os.getpid()))
+
+if __name__=='__main__':
+    p = Process(target=run_proc, args=('test',)) # 创建子进程
+    p.start() # 执行子进程
+    p.join() # 等待子进程结束
+
+进程池：
+控制子进程输入输出：
+进程间通信：
+myMultiprocessing2.py
+
+多线程：myThread.py
+
+python解释器执行代码时，有一个GIL锁：Global Interpreter Lock，
+任何Python线程执行前，必须先获得GIL锁
+所以Python不能利用多线程实现多核任务，但可以通过多进程实现多核任务。
+多个Python进程有各自独立的GIL锁，互不影响。
+
+ThreadLocal最常用的地方就是为每个线程绑定一个数据库连接，HTTP请求，用户身份信息等，这样一个线程的所有调用到的处理函数都可以非常方便地访问这些资源。
+
+Process可以分布到多台机器上，而Thread最多只能分布到同一台机器的多个CPU上
+分布进程到多计算机上：task_master.py  task_work.py
+
+正则表达式：
+
+定长：
+\d可以匹配一个数字
+\w可以匹配一个字母或数字
+.可以匹配任意字符
+\s可以匹配一个空格（也包括Tab等空白符）
+
+不定长：
+*表示任意个字符（包括0个）
++表示至少一个字符
+?表示0个或1个字符
+{n}表示n个字符
+{n,m}表示n-m个字符
+
+'-'是特殊字符，在正则表达式中，要用'\'转义
+
+用[]表示范围，如：[0-9a-zA-Z\_]可以匹配一个数字、字母或者下划线
+
+A|B可以匹配A或B
+
+^表示行的开头，^\d表示必须以数字开头。
+
+$表示行的结束，\d$表示必须以数字结束。
+
+注意：py也可以匹配'python'，但是加上^py$就变成了整行匹配，就只能匹配'py'了
+
+使用Python的r前缀，就不用考虑转义的问题了
+
+match()方法判断是否匹配，如果匹配成功，返回一个Match对象，否则返回None
+>>> import re
+>>> re.match(r'^\d{3}\-\d{3,8}$', '010-12345')
+<_sre.SRE_Match object; span=(0, 9), match='010-12345'>
+
+切分字符串：
+>>> re.split(r'\s+', 'a b   c') # 根据连续的空格切分
+['a', 'b', 'c']
+多个条件分割：
+>>> re.split(r'[\s\,]+', 'a,b, c  d')
+['a', 'b', 'c', 'd']
+
+分组：（使用小括号）
+>>> m = re.match(r'^(\d{3})-(\d{3,8})$', '010-12345')
+>>> m
+<_sre.SRE_Match object; span=(0, 9), match='010-12345'>
+>>> m.group(0)
+'010-12345'
+>>> m.group(1)
+'010'
+>>> m.group(2)
+'12345'
+
+贪婪匹配：
+>>> re.match(r'^(\d+)(0*)$', '102300').groups()
+('102300', '')
+
+非贪婪匹配：
+>>> re.match(r'^(\d+?)(0*)$', '102300').groups() # 加上？
+('1023', '00')
+
