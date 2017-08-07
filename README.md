@@ -845,3 +845,80 @@ match()方法判断是否匹配，如果匹配成功，返回一个Match对象�
 >>> re.match(r'^(\d+?)(0*)$', '102300').groups() # 加上？
 ('1023', '00')
 
+
+日期：
+from datetime import datetime
+
+datetime转换为timestamp：timestamp()
+dt = datetime(2015, 4, 19, 12, 20) # 用指定日期时间创建datetime
+dt.timestamp() # 把datetime转换为timestamp
+
+timestamp转换为datetime：fromtimestamp(t)
+t = 1429417200.0
+print(datetime.fromtimestamp(t))
+
+转化为UTC标准时间
+t = 1429417200.0
+print(datetime.fromtimestamp(t)) # 本地时间 # 2015-04-19 12:20:00
+print(datetime.utcfromtimestamp(t)) # UTC时间 # 2015-04-19 04:20:00
+
+str转换为datetime
+cday = datetime.strptime('2015-6-1 18:19:59', '%Y-%m-%d %H:%M:%S')
+
+datetime转换为str
+now = datetime.now()
+print(now.strftime('%a, %b %d %H:%M'))
+
+datetime加减
+from datetime import datetime, timedelta
+now = datetime.now()
+now + timedelta(days=2, hours=12) # datetime.datetime(2015, 5, 21, 4, 57, 3, 540997)
+
+本地时间转换为UTC时间
+from datetime import datetime, timedelta, timezone
+now = datetime.now() # datetime.datetime(2015, 5, 18, 17, 2, 10, 871012)
+dt = now.replace(tzinfo=timezone(timedelta(hours=8))) # 强制设置为UTC+8:00
+# datetime.datetime(2015, 5, 18, 17, 2, 10, 871012, tzinfo=datetime.timezone(datetime.timedelta(0, 28800)))
+
+时区转换：任何带时区的datetime都可以正确转换
+# 拿到UTC时间，并强制设置时区为UTC+0:00:
+utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) # 2015-05-18 09:05:12.377316+00:00
+# astimezone()将转换时区为北京时间:
+bj_dt = utc_dt.astimezone(timezone(timedelta(hours=8))) # 2015-05-18 17:05:12.377316+08:00
+
+
+namedtuple：创建一个自定义的tuple对象
+from collections import namedtuple
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(1, 2)
+p.x # 1
+p.y # 2
+
+deque：高效实现插入和删除操作的双向列表，适合用于队列和栈
+from collections import deque
+q = deque(['a', 'b', 'c'])
+q.append('x') # appendleft
+q.pop('y') # popleft
+
+defaultdict：希望dict的key不存在时，返回一个默认值
+from collections import defaultdict
+dd = defaultdict(lambda: 'N/A')
+dd['key1'] = 'abc'
+dd['key1'] # key1存在，返回'abc'
+dd['key2'] # key2不存在，返回默认值'N/A
+
+OrderedDict：保持dict顺序
+from collections import OrderedDict
+d = dict([('a', 1), ('b', 2), ('c', 3)]) # dict的Key是无序的 {'a': 1, 'c': 3, 'b': 2}
+od = OrderedDict([('a', 1), ('b', 2), ('c', 3)]) # OrderedDict的Key是有序的 OrderedDict([('a', 1), ('b', 2), ('c', 3)])
+注意，OrderedDict的Key会按照插入的顺序排列，不是Key本身排序
+OrderedDict可以实现一个FIFO（先进先出）的dict，当容量超出限制时，先删除最早添加的Key
+
+Counter：
+>>> from collections import Counter
+>>> c = Counter()
+>>> for ch in 'programming':
+...     c[ch] = c[ch] + 1
+...
+>>> c
+Counter({'g': 2, 'm': 2, 'r': 2, 'a': 1, 'i': 1, 'o': 1, 'n': 1, 'p': 1})
