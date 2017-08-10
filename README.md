@@ -922,3 +922,15 @@ Counter：
 ...
 >>> c
 Counter({'g': 2, 'm': 2, 'r': 2, 'a': 1, 'i': 1, 'o': 1, 'n': 1, 'p': 1})
+
+
+数据库：
+SQLite:
+使用Cursor对象执行insert，update，delete语句时，执行结果由rowcount返回影响的行数，就可以拿到执行结果。
+
+使用Cursor对象执行select语句时，通过featchall()可以拿到结果集。结果集是一个list，每个元素都是一个tuple，对应一行记录。
+
+Mysql:
+执行INSERT等操作后要调用commit()提交事务；
+
+MySQL的SQL占位符是%s
